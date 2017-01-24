@@ -85,7 +85,7 @@ class Database
     {
         $data = file_get_contents($this->file);
         if (strlen($data) === 0) {
-            return array();
+            return [];
         }
         if ($this->isEncrypted()) {
             $data = Crypto::decryptWithPassword($data, $this->key, true);
@@ -228,12 +228,12 @@ class Database
      * @param array $fields the list of names of fields to get, empty for all
      * @return array        an array of field names against values for every row in the data set
      */
-    function select($fields = array())
+    function select($fields = [])
     {
         $db = $this->load();
-        $result = array();
-        $values = array();
-        if ($fields === array()) {
+        $result = [];
+        $values = [];
+        if ($fields === []) {
             foreach ($db as $index => $row) {
                 foreach (array_keys($row) as $c) {
                     $values[$c] = $row[$c];
@@ -241,7 +241,7 @@ class Database
                 if ($values) {
                     $result[$index] = $values;
                 }
-                $values = array();
+                $values = [];
             }
         } else {
             foreach ($db as $index => $row) {
@@ -253,7 +253,7 @@ class Database
                 if ($values) {
                     $result[$index] = $values;
                 }
-                $values = array();
+                $values = [];
             }
         }
         return $result;
@@ -270,16 +270,16 @@ class Database
     function where($field, $key, $val)
     {
         $db = $this->load();
-        $result = array();
-        $values = array();
-        if ($field === array()) {
+        $result = [];
+        $values = [];
+        if ($field === []) {
             foreach ($db as $index => $row) {
                 if ($row[$key] === $val) {
                     foreach (array_keys($row) as $c) {
                         $values[$c] = $row[$c];
                     }
                     $result[$index] = $values;
-                    $values = array();
+                    $values = [];
                 }
             }
         } else {
@@ -289,7 +289,7 @@ class Database
                         $values[$c] = $row[$c];
                     }
                     $result[$index] = $values;
-                    $values = array();
+                    $values = [];
                 }
             }
         }
@@ -308,16 +308,16 @@ class Database
     function in($fields, $key, $val)
     {
         $db = $this->load();
-        $result = array();
-        $values = array();
-        if ($fields === array()) {
+        $result = [];
+        $values = [];
+        if ($fields === []) {
             foreach ($db as $index => $row) {
                 if (in_array($row[$key], $val)) {
                     foreach (array_keys($row) as $c) {
                         $values[$c] = $row[$c];
                     }
                     $result[$index] = $values;
-                    $values = array();
+                    $values = [];
                 }
             }
         } else {
@@ -327,7 +327,7 @@ class Database
                         $values[$c] = $row[$c];
                     }
                     $result[$index] = $values;
-                    $values = array();
+                    $values = [];
                 }
             }
         }
@@ -345,16 +345,16 @@ class Database
     function like($fields, $key, $regex)
     {
         $db = $this->load();
-        $result = array();
-        $values = array();
-        if ($fields === array()) {
+        $result = [];
+        $values = [];
+        if ($fields === []) {
             foreach ($db as $index => $row) {
                 if (preg_match($regex, $row[$key])) {
                     foreach (array_keys($row) as $c) {
                         $values[$c] = $row[$c];
                     }
                     $result[$index] = $values;
-                    $values = array();
+                    $values = [];
                 }
             }
         } else {
@@ -364,7 +364,7 @@ class Database
                         $values[$c] = $row[$c];
                     }
                     $result[$index] = $values;
-                    $values = array();
+                    $values = [];
                 }
             }
         }
@@ -405,8 +405,8 @@ class Database
     {
         $left = $this->load();
         $right = $second->load();
-        $result = array();
-        $values = array();
+        $result = [];
+        $values = [];
         if ($method === 'inner') {
             foreach ($left as $l) {
                 foreach ($right as $r) {
@@ -426,7 +426,7 @@ class Database
                     }
                 }
                 $result[] = $values;
-                $values = array();
+                $values = [];
             }
         } elseif ($method === 'right') {
             foreach ($left as $l) {
@@ -439,7 +439,7 @@ class Database
                     }
                 }
                 $result[] = $values;
-                $values = array();
+                $values = [];
             }
         } elseif ($method === 'full') {
             $result = array_map(
@@ -484,7 +484,7 @@ class Database
     public function count($field = '')
     {
         if ($field === '') {
-            $query = array();
+            $query = [];
         } else {
             $query = (array) $field;
         }
