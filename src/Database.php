@@ -49,7 +49,7 @@ class Database
      *
      * @param string $name  name of the database
      * @param string $path  directory of the database file
-     * @param string $key   the key used to encrypt the database
+     * @param string $key   the key used to encrypt the database, blank for no encryption
      */
     public function __construct($name, $path = 'db', $key = '')
     {
@@ -185,18 +185,18 @@ class Database
     /**
      * Changes the value of a field in rows satisfying a condition.
      *
-     * @param string $col   the name of the field to change
+     * @param string $field the name of the field to change
      * @param string $to    the value to change the field to
      * @param string $key   the name of the field to search for
      * @param string $val   the value of the field to search for
      * @return array        the updated data set
      */
-    public function to($col, $to, $key, $val)
+    public function to($field, $to, $key, $val)
     {
         $db = $this->load();
         foreach ($db as $index => $row) {
             if ($row[$key] === $val) {
-                $db[$index][$col] = $to;
+                $db[$index][$field] = $to;
             }
         }
         return $this->rewrite($db);
@@ -205,17 +205,17 @@ class Database
     /**
      * Get the row where the value matches that of the key and returns the value of the other key.
      *
-     * @param string $col   the name of the field to return
+     * @param string $field the name of the field to return
      * @param string $key   the name of the field to search for
      * @param string $val   the value of the field to search for
      * @return array        the matching row
      */
-    public function get($col, $key, $val)
+    public function get($field, $key, $val)
     {
         $db = $this->load();
         foreach ($db as $index => $row) {
-            if ($row[$key] === $val && $row[$col]) {
-                return $row[$col];
+            if ($row[$key] === $val && $row[$field]) {
+                return $row[$field];
                 break;
             }
         }
@@ -223,18 +223,17 @@ class Database
     }
 
     /**
-     * Get a set of columns for all rows
+     * Gets an array of field names against values for every row in the data set.
      *
-     * @param array $cols the list of columns to get, empty for all
-     *
-     * @return array
+     * @param array $fields the list of names of fields to get, empty for all
+     * @return array        an array of field names against values for every row in the data set
      */
-    function select($cols = array())
+    function select($fields = array())
     {
         $db = $this->load();
         $result = array();
         $values = array();
-        if ($cols === array()) {
+        if ($fields === array()) {
             foreach ($db as $index => $row) {
                 foreach (array_keys($row) as $c) {
                     $values[$c] = $row[$c];
@@ -246,7 +245,7 @@ class Database
             }
         } else {
             foreach ($db as $index => $row) {
-                foreach ((array) $cols as $c) {
+                foreach ((array) $fields as $c) {
                     if ($row[$c]) {
                         $values[$c] = $row[$c];
                     }
@@ -261,20 +260,19 @@ class Database
     }
 
     /**
-     * Get the row where the value matches that of the key and return the value of the other key
+     * Gets an array of field names against values for every row in the data set where a field has a given value.
      *
-     * @param array  $cols
-     * @param string $key
-     * @param string $val
-     *
-     * @return array
+     * @param array $field  the names of the fields to return
+     * @param string $key   the key of the field to check
+     * @param string $val   the value to check the field for
+     * @return array        the returned fields
      */
-    function where($cols, $key, $val)
+    function where($field, $key, $val)
     {
         $db = $this->load();
         $result = array();
         $values = array();
-        if ($cols === array()) {
+        if ($field === array()) {
             foreach ($db as $index => $row) {
                 if ($row[$key] === $val) {
                     foreach (array_keys($row) as $c) {
@@ -287,7 +285,7 @@ class Database
         } else {
             foreach ($db as $index => $row) {
                 if ($row[$key] === $val) {
-                    foreach ((array) $cols as $c) {
+                    foreach ((array) $field as $c) {
                         $values[$c] = $row[$c];
                     }
                     $result[$index] = $values;
@@ -299,20 +297,20 @@ class Database
     }
 
     /**
-     * Get columns from rows in which the key's value is part of the inputted array of values
+     * Gets an array of field names against values for every row in the data set where a field has one of a given set
+     * of values.
      *
-     * @param array  $cols the columns to return
-     * @param string $key  the column to look for the value
-     * @param array  $val  an array of values to be accepted
-     *
-     * @return array
+     * @param array $fields the fields to return (empty for all)
+     * @param string $key   the key of the field to check
+     * @param array $val    the values to check the field for
+     * @return array        the returned fields
      */
-    function in($cols, $key, $val)
+    function in($fields, $key, $val)
     {
         $db = $this->load();
         $result = array();
         $values = array();
-        if ($cols === array()) {
+        if ($fields === array()) {
             foreach ($db as $index => $row) {
                 if (in_array($row[$key], $val)) {
                     foreach (array_keys($row) as $c) {
@@ -325,7 +323,7 @@ class Database
         } else {
             foreach ($db as $index => $row) {
                 if (in_array($row[$key], $val)) {
-                    foreach ((array) $cols as $c) {
+                    foreach ((array) $fields as $c) {
                         $values[$c] = $row[$c];
                     }
                     $result[$index] = $values;
@@ -337,20 +335,19 @@ class Database
     }
 
     /**
-     * Matches keys and values based on a regular expression
+     * Matches keys and values based on a regular expression.
      *
-     * @param array  $cols  the columns to return; an empty array returns all columns
-     * @param string $key   the column whose value to match
+     * @param array $fields the fields to return (empty for all)
+     * @param string $key   the key of the field to check
      * @param string $regex the regular expression to match
-     *
-     * @return array
+     * @return array        the returned fields
      */
-    function like($cols, $key, $regex)
+    function like($fields, $key, $regex)
     {
         $db = $this->load();
         $result = array();
         $values = array();
-        if ($cols === array()) {
+        if ($fields === array()) {
             foreach ($db as $index => $row) {
                 if (preg_match($regex, $row[$key])) {
                     foreach (array_keys($row) as $c) {
@@ -363,7 +360,7 @@ class Database
         } else {
             foreach ($db as $index => $row) {
                 if (preg_match($regex, $row[$key])) {
-                    foreach ((array) $cols as $c) {
+                    foreach ((array) $fields as $c) {
                         $values[$c] = $row[$c];
                     }
                     $result[$index] = $values;
@@ -375,21 +372,20 @@ class Database
     }
 
     /**
-     * Merges two databases and gets rid of duplicates
+     * Merges two databases, removing duplicates.
      *
-     * @param array $cols   the columns to merge
-     * @param Database $second the second database to merge
-     *
-     * @return array          the merged array
+     * @param array $fields     the fields to merge
+     * @param Database $second  the second database to merge
+     * @return array            the merged array
      */
-    function union($cols, $second)
+    function union($fields, $second)
     {
         return array_map(
             'unserialize', array_unique(
                 array_map(
                     'serialize', array_merge(
-                        $this->select($cols),
-                        $second->select($cols)
+                        $this->select($fields),
+                        $second->select($fields)
                     )
                 )
             )
@@ -397,50 +393,49 @@ class Database
     }
 
     /**
-     * Matches and merges columns between databases
+     * Matches and merges fields between databases.
      *
-     * @param string $method the method to join (inner, left, right, full)
-     * @param array  $cols   the columns to select
-     * @param Database  $second the second database to consider
-     * @param array  $match  a key-value pair: left column to match => right column
-     *
-     * @return array joined array
+     * @param string $method    the method to join (inner, left, right, full)
+     * @param array $fields     the fields to select
+     * @param Database $second  the second database to use
+     * @param array $match      a key-value pair consisting of the left field name against the right field name
+     * @return array            the joined data set
      */
-    function join($method, $cols, $second, $match)
+    function join($method, $fields, $second, $match)
     {
         $left = $this->load();
         $right = $second->load();
         $result = array();
         $values = array();
         if ($method === 'inner') {
-            foreach ($left as $lrow) {
-                foreach ($right as $rrow) {
-                    if ($lrow[array_keys($match)[0]] === $rrow[array_values($match)[0]]) {
-                        $result[] = array_merge($lrow, $rrow);
+            foreach ($left as $l) {
+                foreach ($right as $r) {
+                    if ($l[array_keys($match)[0]] === $r[array_values($match)[0]]) {
+                        $result[] = array_merge($l, $r);
                     }
                 }
             }
         } elseif ($method === 'left') {
-            foreach ($left as $lrow) {
-                foreach ($right as $rrow) {
-                    if ($lrow[array_keys($match)[0]] === $rrow[array_values($match)[0]]) {
-                        $values = array_merge($lrow, $rrow);
+            foreach ($left as $l) {
+                foreach ($right as $r) {
+                    if ($l[array_keys($match)[0]] === $r[array_values($match)[0]]) {
+                        $values = array_merge($l, $r);
                         break;
                     } else {
-                        $values = $lrow;
+                        $values = $l;
                     }
                 }
                 $result[] = $values;
                 $values = array();
             }
         } elseif ($method === 'right') {
-            foreach ($left as $lrow) {
-                foreach ($right as $rrow) {
-                    if ($lrow[array_keys($match)[0]] === $rrow[array_values($match)[0]]) {
-                        $values = array_merge($lrow, $rrow);
+            foreach ($left as $l) {
+                foreach ($right as $r) {
+                    if ($l[array_keys($match)[0]] === $r[array_values($match)[0]]) {
+                        $values = array_merge($l, $r);
                         break;
                     } else {
-                        $values = $rrow;
+                        $values = $r;
                     }
                 }
                 $result[] = $values;
@@ -451,33 +446,29 @@ class Database
                 'unserialize', array_unique(
                     array_map(
                         'serialize', array_merge(
-                            $this
-                               ->join('left', $cols, $second, $match),
-                            $this
-                               ->join('right', $cols, $second, $match)
+                            $this->join('left', $fields, $second, $match),
+                            $this->join('right', $fields, $second, $match)
                         )
                     )
                 )
             );
         }
-        return Prequel::select($cols, $result);
+        return Prequel::select($fields, $result);
     }
 
-
     /**
-     * Checks whether the given key/value pair exists
+     * Checks whether the database contains a field with the specified value.
      *
-     * @param string $key the key
-     * @param string $val the value
-     *
-     * @return boolean whether the pair exists
+     * @param string $field the field name
+     * @param string $val   the value to check the field for
+     * @return boolean      true if the pair exists, otherwise false
      */
-    function exists($key, $val)
+    public function exists($field, $val)
     {
         $db = $this->load();
         $result = false;
         foreach ($db as $index => $row) {
-            if ($row[$key] === $val) {
+            if ($row[$field] === $val) {
                 $result = true;
             }
         }
@@ -485,45 +476,42 @@ class Database
     }
 
     /**
-     * Counts the number of items per column or for all columns
+     * Counts the number of items per field or for all fields.
      *
-     * @param string $col the column name to count. No input counts all columns.
-     *
-     * @return int the number of rows containing that column.
+     * @param string $field the field name to count (empty for all fields)
+     * @return int          the number of rows containing that field
      */
-    function count($col = '')
+    public function count($field = '')
     {
-        if ($col === '') {
+        if ($field === '') {
             $query = array();
         } else {
-            $query = (array) $col;
+            $query = (array) $field;
         }
         return count($this->select($query));
     }
 
     /**
-     * Gets the first item of a column
+     * Gets the first item in a field.
      *
-     * @param string $col the column to look at
-     *
-     * @return mixed the first item in the column
+     * @param string $field the field to look at
+     * @return mixed        the first item in the field
      */
-    function first($col)
+    public function first($field)
     {
-        return $this->select((array) $col)[0][$col];
+        return $this->select((array) $field)[0][$field];
     }
 
     /**
-     * Gets the last item in a column
+     * Gets the last item in a field.
      *
-     * @param string $col the name of the column to look at
-     *
-     * @return mixed the last item in the column
+     * @param string $field the name of the field to look at
+     * @return mixed        the last item in the field
      */
-    function last($col)
+    public function last($field)
     {
-        $values = $this->select((array) $col);
-        return end($values)[$col];
+        $values = $this->select((array) $field);
+        return end($values)[$field];
     }
 
     /**
