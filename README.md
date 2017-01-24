@@ -8,6 +8,19 @@ Based on the [Fllat](https://github.com/wylst/fllat) and [Prequel](https://githu
 * Encrypted databases using [php-encryption](https://github.com/defuse/php-encryption) by [Taylor Hornby](https://github.com/defuse)
 * Composer via Packagist
 
+## Installation
+Install Codense via Composer like this:
+
+```bash
+composer require lambdacasserole/condense
+```
+
+Or alternatively, if you're using the PHAR (make sure the `php.exe` executable is in your PATH):
+
+```
+php composer.phar require lambdacasserole/condense
+```
+
 ## Caveats
 This is a flat file database system. It removes the headache of setting up and configuring a database server, but introduces a few of its own:
 
