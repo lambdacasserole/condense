@@ -223,18 +223,17 @@ class Database
     }
 
     /**
-     * Gets an array of field names against values for every row in the data set.
+     * Gets an array of field names against values for every member of an array.
      *
      * @param array $fields the list of names of fields to get, empty for all
-     * @return array        an array of field names against values for every row in the data set
+     * @param array $arr    the array to query
+     * @return array        an array of field names against values for every member of the array
      */
-    function select($fields = [])
-    {
-        $db = $this->load();
+    private static function arraySelect($fields = [], $arr) {
         $result = [];
         $values = [];
         if ($fields === []) {
-            foreach ($db as $index => $row) {
+            foreach ($arr as $index => $row) {
                 foreach (array_keys($row) as $c) {
                     $values[$c] = $row[$c];
                 }
@@ -244,7 +243,7 @@ class Database
                 $values = [];
             }
         } else {
-            foreach ($db as $index => $row) {
+            foreach ($arr as $index => $row) {
                 foreach ((array) $fields as $c) {
                     if ($row[$c]) {
                         $values[$c] = $row[$c];
@@ -257,6 +256,18 @@ class Database
             }
         }
         return $result;
+    }
+
+    /**
+     * Gets an array of field names against values for every row in the data set.
+     *
+     * @param array $fields the list of names of fields to get, empty for all
+     * @return array        an array of field names against values for every row in the data set
+     */
+    function select($fields = [])
+    {
+        $db = $this->load();
+        return self::arraySelect($fields, $db);
     }
 
     /**
@@ -453,7 +464,7 @@ class Database
                 )
             );
         }
-        return Prequel::select($fields, $result);
+        return self::arraySelect($fields, $result);
     }
 
     /**
