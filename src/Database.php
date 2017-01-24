@@ -264,7 +264,7 @@ class Database
      * @param array $fields the list of names of fields to get, empty for all
      * @return array        an array of field names against values for every row in the data set
      */
-    function select($fields = [])
+    public function select($fields = [])
     {
         $db = $this->load();
         return self::arraySelect($fields, $db);
@@ -278,7 +278,7 @@ class Database
      * @param string $val   the value to check the field for
      * @return array        the returned fields
      */
-    function where($field, $key, $val)
+    public function where($field, $key, $val)
     {
         $db = $this->load();
         $result = [];
@@ -316,7 +316,7 @@ class Database
      * @param array $val    the values to check the field for
      * @return array        the returned fields
      */
-    function in($fields, $key, $val)
+    public function in($fields, $key, $val)
     {
         $db = $this->load();
         $result = [];
@@ -353,7 +353,7 @@ class Database
      * @param string $regex the regular expression to match
      * @return array        the returned fields
      */
-    function like($fields, $key, $regex)
+    public function like($fields, $key, $regex)
     {
         $db = $this->load();
         $result = [];
@@ -389,7 +389,7 @@ class Database
      * @param Database $second  the second database to merge
      * @return array            the merged array
      */
-    function union($fields, $second)
+    public function union($fields, $second)
     {
         return array_map(
             'unserialize', array_unique(
@@ -412,7 +412,7 @@ class Database
      * @param array $match      a key-value pair consisting of the left field name against the right field name
      * @return array            the joined data set
      */
-    function join($method, $fields, $second, $match)
+    public function join($method, $fields, $second, $match)
     {
         $left = $this->load();
         $right = $second->load();
