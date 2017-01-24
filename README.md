@@ -37,7 +37,7 @@ $db = new Database('employees', '../storage');
 The constructor also accepts a third parameter which allows you to specify a key to use to encrypt the database with.
 
 ```php
-$db = new Database('secrets`, '../private', 'my-secret-password');
+$db = new Database('secrets', '../private', 'my-secret-password');
 ```
 
 When loading the database again, this same password must be used.
