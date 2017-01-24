@@ -8,3 +8,10 @@ Based on the [Fllat](https://github.com/wylst/fllat) and [Prequel](https://githu
 * Encrypted databases using [php-encryption](https://github.com/defuse/php-encryption) by [Taylor Hornby](https://github.com/defuse)
 * Composer via Packagist
 
+## Caveats
+This is a flat file database system. It removes the headache of setting up and configuring a database server, but introduces a few of its own:
+
+* I/O will be _much_ slower due to many disk read/write actions
+* Encrypting a database will hugely affect performance
+* Bugs may arise due to concurrency issues
+* Misconfigured web applications using this library may accidentally allow their databases to be downloaded over HTTP
