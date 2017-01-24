@@ -73,6 +73,33 @@ $employees->select([]);
 $employees->select(['first_name']);
 ```
 
+### Update
+Condense provides a couple of methods for updating existing data in a database.
+
+#### One Field
+Use the `to` method to update one field for any row satisfying a condition.
+
+```php
+// Change every employee with a first name 'Ethan' to have the surname 'Smithers'.
+$employees->to('last_name', 'Smithers', 'first_name', 'Ethan');
+```
+
+#### One Row
+Use the `update` method to update a row by index.
+
+```php
+// Change the first row in the database completely.
+$employees->update(0, ['first_name' => 'Alison', 'last_name' => 'Bradberry']);
+```
+
+### Delete
+Use the `remove` method to delete a row in the database.
+
+```php
+// Remove the first row in the database.
+$employees->remove(0);
+```
+
 ## Caveats
 This is a flat file database system. It removes the headache of setting up and configuring a database server, but introduces a few of its own:
 
