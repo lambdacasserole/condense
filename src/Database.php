@@ -124,12 +124,12 @@ class Database
     }
 
     /**
-     * Adds data to database.
+     * Inserts a row into the database.
      *
-     * @param array $data   the data to add
+     * @param array $data   the row to insert
      * @return array        the updated data set
      */
-    public function add($data)
+    public function insert($data)
     {
         $db = $this->load();
         $db[] = $data;
