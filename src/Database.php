@@ -83,6 +83,9 @@ class Database
      */
     public function load()
     {
+        if (!file_exists($this->file)) {
+            return []; // File doesn't exist yet.
+        }
         $data = file_get_contents($this->file);
         if (strlen($data) === 0) {
             return [];
