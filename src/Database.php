@@ -51,12 +51,15 @@ class Database
      * @param string $path  directory of the database file
      * @param string $key   the key used to encrypt the database, blank for no encryption
      */
-    public function __construct($name, $path = 'db', $key = '')
+    public function __construct($name, $path = __DIR__, $key = '')
     {
         $this->name = $name;
         $this->path = $path;
         $this->key = $key;
-        $this->initialize($path . '/' . $this->name . '.dat');
+        $this->initialize($path
+            . ($path[strlen($path) - 1] === '/' ? '' : '/') // Add a slash if necessary.
+            . $this->name
+            . '.dat'); // Always have a '*.dat' extension.
     }
 
     /**
@@ -162,6 +165,7 @@ class Database
     public function update($index, $data)
     {
         $db = $this->load();
+
         $db[$index] = array_merge($db[$index], $data);
         return $this->rewrite($db);
     }
@@ -546,5 +550,29 @@ class Database
     public function isEncrypted()
     {
         return $this->key !== '';
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFile()
+    {
+        return $this->file;
     }
 }
