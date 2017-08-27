@@ -206,12 +206,12 @@ class Database
     }
 
     /**
-     * Get the row where the value matches that of the key and returns the value of the other key.
+     * Get the value of the specified field of the first row where a specified field contains a specified value.
      *
      * @param string $field the name of the field to return
      * @param string $key   the name of the field to search for
      * @param string $val   the value of the field to search for
-     * @return array        the matching row
+     * @return string       the value of the specified field
      */
     public function get($field, $key, $val)
     {
