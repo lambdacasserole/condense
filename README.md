@@ -9,7 +9,7 @@ Based on the [Fllat](https://github.com/wylst/fllat) and [Prequel](https://githu
 * Composer via Packagist
 
 ## Installation
-Install Codense via Composer like this:
+Install Condense via Composer like this:
 
 ```bash
 composer require lambdacasserole/condense
@@ -50,8 +50,8 @@ $hire = ['first_name' => 'Ethan', 'last_name' => 'Benson', 'salary' => 20000];
 $employees->insert($hire);
 ```
 
-### Retreive
-Condense provides several methods for data retreival.
+### Retrieve
+Condense provides several methods for data retrieval.
 
 #### One Value
 Use the `get` method. Specify a field name, another field name, and a value. It will return the value of the first field where (in the same row), the value of the second field matches the given value.
